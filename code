@@ -1,0 +1,82 @@
+import pygame
+import random
+
+pygame.init()
+screen = pygame.display.set_mode((600, 600))
+
+done = False
+
+x = 300
+y = 300
+x_2 = random.randint(50, 550)
+y_2 = random.randint(50, 550)
+
+backgound_image = pygame.image.load("image.jpg")
+
+font = pygame.font.SysFont("comicsansms", 36)
+pontszam_text = font.render("pontszam:", True, (0, 255, 0))
+ujra_text = font.render("ujrakezdes", True, (204, 255, 255))
+ment_idod_text = font.render("Idod:", True, (204, 255, 255))
+rekord_idod_text = font.render("Rekord:", True, (204, 255, 255))
+
+
+ido = 0
+pontszam = 0
+rekordido = 9999
+
+while not done:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+
+
+    pressed = pygame.key.get_pressed()
+    if pressed[pygame.K_UP] and y > 0:
+        y -= 3
+    if pressed[pygame.K_DOWN] and y < 600 - 30:
+        y += 3
+    if pressed[pygame.K_LEFT] and x > 0:
+        x -= 3
+    if pressed[pygame.K_RIGHT] and x < 600 - 30:
+        x += 3
+
+
+    screen.blit(backgound_image, [0, 0])
+
+    if pontszam < 3:
+        a = pygame.draw.rect(screen, (0, 128, 255), (x, y, 30, 30))
+        b = pygame.draw.rect(screen, (0, 255, 0), (x_2, y_2, 30, 30))
+
+        if a.colliderect(b):
+            pontszam += 1
+            x_2 = random.randint(50, 550)
+            y_2 = random.randint(50, 550)
+            pygame.display.update(b)
+
+
+        ido += 1/100
+        ido_text = font.render(str(int(ido)), True, (255, 255, 0))
+        screen.blit(ido_text, (600 - ido_text.get_width() -25, 0))
+
+        screen.blit(pontszam_text, (10,0))
+        pontszam_text2 = font.render(str(pontszam), True, (0, 255, 0))
+        screen.blit(pontszam_text2, (pontszam_text.get_width() + 10, 0))
+    else:
+        if ido < rekordido:
+            rekordido = ido
+
+        u = screen.blit(ujra_text, (300, 250))
+        screen.blit(ment_idod_text, (300, 400))
+        ment_idod_text2 = font.render(str(int(ido)), True, (255, 255, 0))
+        screen.blit(ment_idod_text2, (300 + ment_idod_text.get_width() + 10, 400))
+        screen.blit(rekord_idod_text, (300, 450))
+        rekord_idod_text2 = font.render(str(int(rekordido)), True, (255, 225, 0))
+        screen.blit(rekord_idod_text2, (300 + rekord_idod_text.get_width() + 10, 450))
+
+        if u.collidepoint(pygame.mouse.get_pos()):
+            pontszam = 0
+            ido = 0
+
+
+    pygame.display.flip()
+    pygame.time.Clock().tick(250)
